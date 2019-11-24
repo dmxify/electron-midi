@@ -1,6 +1,6 @@
 {
   "name": "electron-midi",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Electron node.js module with useful methods to use the Web MIDI API",
   "main": "index.js",
   "scripts": {
