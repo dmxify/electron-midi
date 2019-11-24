@@ -10,10 +10,10 @@ let winTest; // global reference to test BrowserWindow
 app.on('ready', () => {
   winTest = new BrowserWindow({
     name: 'electron-midi test',
-    x: 100,
-    y: 100,
-    width: 500,
-    height: 500,
+    x: 50,
+    y: 50,
+    width: 600,
+    height: 650,
     webPreferences: {
       nodeIntegration: true
     }

@@ -8,40 +8,56 @@ const linksToBrowser = require('electron-hyperlinks-to-browser')
 
 /* require the electron-midi module for testing (relative path): */
 const ElectronMidi = require('./../')
+/* require the electron-midi module for testing (node_modules path): */
+//const ElectronMidi = require('electron-midi')
 const electronMidi = new ElectronMidi();
 
-// electronMidi.onHardwareChange = function(e){
-//   console.log(`override: ${e.port}`);
-// };
-
-electronMidi.onHardwareChange = function(e) {
-  refreshDom();
-}
-
 electronMidi.onReady = refreshDom;
+electronMidi.onHardwareChange = refreshDom;
+electronMidi.onInputMessage = showInputMessage;
 
 function refreshDom() {
   // for each I/O device populate dropdowns.
 
-  // remove existing options:
-  let selectInputs = document.getElementById("selectInputs");
-  let selectOutputs = document.getElementById("selectOutputs");
-  // remove the current options from the input select
-  while (selectInputs.options.length > 0) {
-    selectInputs.remove(0);
-  }
-  while (selectOutputs.options.length > 0) {
-    selectOutputs.remove(0);
+  let divInputDevices = document.getElementById("divInputDevices");
+  divInputDevices.innerHTML = ""; // clear old DOM
+  for (let input of electronMidi.inputs.values()) {
+    var device = document.createElement("div");
+    device.innerHTML = input.name;
+    device.classList.add('device');
+    divInputDevices.appendChild(device);
   }
 
-  for (let input of electronMidi.inputs.values()) {
-    var opt = document.createElement("option");
-    opt.text = input.name;
-    document.getElementById("selectInputs").add(opt);
-  }
+  let divOutputDevices = document.getElementById("divOutputDevices");
+  divOutputDevices.innerHTML = ""; // clear old DOM
   for (let output of electronMidi.outputs.values()) {
-    var opt = document.createElement("option");
-    opt.text = output.name;
-    document.getElementById("selectOutputs").add(opt);
+    var device = document.createElement("div");
+    device.innerHTML = output.name;
+    device.classList.add('device');
+    divOutputDevices.appendChild(device);
   }
+
+
+  document.getElementById("divStatusMessages").innerHTML = `Device list updated [${getTime()}]`;
 };
+
+function showInputMessage(e) {
+  document.getElementById("divStatusMessages").innerHTML = `${e.srcElement.name}: [${e.data[0]},${e.data[1]},${e.data[2]}]`;
+}
+
+
+
+function getTime() {
+  var today = new Date();
+  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  return time;
+}
+
+document.getElementById("btnLearn").addEventListener("click", () => {
+  document.getElementById("divLearnInput").innerHTML = 'Now press any button on your Midi Device to learn it';
+
+  electronMidi.learn()
+    .then((result) => {
+      document.getElementById("divLearnInput").innerHTML = `Learnt: ${result.input}:[${result.data[0]},${result.data[1]},${result.data[2]}]`;
+    });
+});

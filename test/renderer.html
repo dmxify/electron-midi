@@ -4,38 +4,99 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" />
   <title>dmxify/electron-midi</title>
 </head>
+<style>
+  body {
+    background-color: #85bced;
+    color: #000000;
+    padding: 10px;
+    margin: 0;
+    font-family: "Roboto", arial, sans-serif;
+  }
+
+  #divStatusMessages {
+    color: #00417a;
+  }
+
+  div.devices {
+    display: inline-block;
+    background-color: #00417a;
+    color: #c1ff00;
+    padding: 15px;
+    height: auto;
+    min-height: 50px;
+    border: 4px outset #009fff;
+    border-radius: 10px;
+    margin: 2px;
+    width: 40%;
+  }
+
+  div.devices span {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-style: italic;
+    opacity: 0.5;
+    padding-bottom: 10px;
+  }
+
+  div.device {
+    padding: 2px 5px;
+  }
+
+  #divLearnInput {
+    display: inline-block;
+    background-color: #00417a;
+    color: #c1ff00;
+    padding: 2px 5px;
+    border: 4px outset #009fff;
+    border-radius: 10px;
+    min-width: 100px;
+  }
+</style>
 
 <body style="user-select:none; -webkit-app-region:drag; ">
 
-  <h1>Welcome to dmxify/electron-midi</h1>
+  <h2>Welcome to dmxify/electron-midi</h2>
   <h4>
-    <a href="https://www.npmjs.com/package/electron-midi">npm package</a>
-    <br />
+    <a href="https://www.npmjs.com/package/electron-midi" style="padding:0 30px;">npm package</a>
     <a href="https://github.com/dmxify/electron-midi">github repo</a>
   </h4>
-  <h4>This package provides useful functionality to the Web MIDI API which is bundled in chromium</h4>
+  <h4>This zero-dependancy package uses the Web MIDI API which is available to Electron's renderer processes.</h4>
   <h3>Try the following:</h3>
   <ul>
     <li>
-      Add a MIDI device to your computer
+      <b>Physically attach / detach a MIDI device from your computer.</b><br />
+      <em>The drop-down boxes should update accordingly (provided the device drivers are installed)</em>
     </li>
     <li>
-      Remove a MIDI device from your computer
+      <b>Send midi messages to and from a midi-device</b><br />
+      <em>Have a look in devtools. <a href="https://github.com/dmxify/electron-midi#documentation">you can also set listeners</a></em>
+    </li>
+    <li>
+      <b>"Learn" input by pressing the button below</b><br />
+      <em>Uses electronMidi.learn().then(response) - an ES6 promise method</em>
     </li>
   </ul>
-
   <div>
-    <label for="selectInputs">Input Ports</label><select id="selectInputs"></select>
-    <br />
-    <label for="selectOutputs">Output Ports</label><select id="selectOutputs"></select>
-  </div>
-  <div id="demo-output">
-    
-  </div>
 
-  <script src="renderer.js"></script>
+  <div id="divStatusMessages"></div>
+  <div class="devices">
+    <span>MIDI Input Devices</span>
+    <div id="divInputDevices"></div>
+  </div>
+  <div class="devices">
+    <span>MIDI Output Devices</span>
+    <div id="divOutputDevices"></div>
+  </div>
+  <br />
+  <button id="btnLearn">Learn from Input</button>
+  <div id="divLearnInput">&#11164; Click this to learn </div>
+  <script src="renderer.js">
+  </script>
 </body>
 
 </html>
