@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+  <title>dmxify/electron-midi</title>
+</head>
+
+<body style="user-select:none; -webkit-app-region:drag; ">
+
+  <h1>Welcome to dmxify/electron-midi</h1>
+  <h4>
+    <a href="https://www.npmjs.com/package/electron-midi">npm package</a>
+    <br />
+    <a href="https://github.com/dmxify/electron-midi">github repo</a>
+  </h4>
+  <h4>This package provides useful functionality to the Web MIDI API which is bundled in chromium</h4>
+  <h3>Try the following:</h3>
+  <ul>
+    <li>
+      Add a MIDI device to your computer
+    </li>
+    <li>
+      Remove a MIDI device from your computer
+    </li>
+  </ul>
+
+  <div>
+    <label for="selectInputs">Input Ports</label><select id="selectInputs"></select>
+    <br />
+    <label for="selectOutputs">Output Ports</label><select id="selectOutputs"></select>
+  </div>
+  <div id="demo-output">
+    
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+
+</html>

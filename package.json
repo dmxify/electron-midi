@@ -1,0 +1,29 @@
+{
+  "name": "electron-midi",
+  "version": "0.1.0",
+  "description": "Electron node.js module with useful methods to use the Web MIDI API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "nodemon --exec electron test/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmxify/electron-midi.git"
+  },
+  "keywords": [
+    "electron",
+    "midi"
+  ],
+  "author": "Jason Banfield",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dmxify/electron-midi/issues"
+  },
+  "homepage": "https://github.com/dmxify/electron-midi#readme",
+  "devDependencies": {
+    "electron": "^7.1.2",
+    "nodemon": "^1.19.4",
+    "electron-hyperlinks-to-browser": "^1.0.0"
+  }
+}
