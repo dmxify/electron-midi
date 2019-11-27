@@ -43,7 +43,10 @@ const ElectronMidi = class {
     return this._midiAccess.outputs;
   }
 
-  /** Creates a promise which temporarily overrides the default onmidimessage event handler, and only resolves when onmidimessage is triggered  */
+  /**
+  *   Creates a promise which temporarily overrides the default onmidimessage event handler, 
+  *   and only resolves when onmidimessage is triggered
+  */
   learn() {
     this._previous_onInputMessage = this._onInputMessage;
     return new Promise((resolve) => {
