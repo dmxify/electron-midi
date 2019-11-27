@@ -43,11 +43,15 @@ const ElectronMidi = class {
     return this._midiAccess.outputs;
   }
 
+  /** Creates a promise which temporarily overrides the default onmidimessage event handler, and only resolves when onmidimessage is triggered  */
   learn() {
     this._previous_onInputMessage = this._onInputMessage;
     return new Promise((resolve) => {
+      // override onmidimessage handler:
       this.onInputMessage = (e) => {
+        // revert to previous onmidimessage handler:
         this.onInputMessage = this._previous_onInputMessage;
+        // and send the triggered midi data back to the promise's resolve callback:
         resolve({
           data: e.data,
           input: e.target.name
@@ -67,6 +71,7 @@ const ElectronMidi = class {
       console.dir(`set ${input.value.name}`);
       input.value.onmidimessage = (e) => {
         this._onInputMessage(e);
+        this.echoMIDIMessage(e);
       }
     }
   }
@@ -98,9 +103,6 @@ const ElectronMidi = class {
       fn(e);
     }
   }
-  set onOutputMessage(fn) {
-    this._onOutputMessage = fn;
-  }
 
   set onHardwareChange(fn) {
     this._onHardwareChange = fn;
@@ -111,23 +113,35 @@ const ElectronMidi = class {
     this._onReady = fn;
   }
 
+  /** Echos input MidiMessage to the first output device with the same name */
+  echoMIDIMessage(e) {
+    let outputs = this._midiAccess.outputs.values();
+    this.send(e.target.name, e.data)
+  }
+
+  send(midiOutputPortName, data) {
+    let outputs = this._midiAccess.outputs.values();
+    for (var o = outputs.next(); o && !o.done; o = outputs.next()) {
+      if (o.value.name == midiOutputPortName) {
+        o.value.send(data);
+        return;
+      }
+    }
+  }
+
   init() {
     navigator.requestMIDIAccess()
       .then(midiAccess => {
           this._midiAccess = midiAccess;
 
           // set onmidimessage handler:
+          this.internal_set_midiAccess_onstatechange();
           this.internal_setAllInputHandlers();
+          this._onReady();
         },
         error => {
           console.error(error);
-        })
-      .then(() => {
-        this.internal_set_midiAccess_onstatechange();
-      })
-      .then(() => {
-        this._onReady();
-      });
+        });
   }
 }
 
