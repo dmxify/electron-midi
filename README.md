@@ -3,7 +3,7 @@
   <a href="https://www.npmjs.com/package/electron-midi" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/electron-midi.svg">
   </a>
-  <a href="tps://github.com/dmxify/electron-midi#API" target="_blank">
+  <a href="https://github.com/dmxify/electron-midi#API" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
   <a href="https://github.com/dmxify/electron-midi/graphs/commit-activity" target="_blank">
