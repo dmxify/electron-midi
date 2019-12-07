@@ -32,6 +32,7 @@ const ElectronMidi = class {
     this._onHardwareChange = function() {};
     this._onReady = function() {};
     this._onInputMessage = consoleLogMidiMessages;
+    this._onOutputMessage = this.echoMIDIMessage;
     this.init();
   }
 
@@ -83,48 +84,42 @@ const ElectronMidi = class {
   }
 
   /**
-   * @name internal_setAllInputHandlers - Internal method
+   * @name initMidiInputs - Internal method
    * @private
    */
-  internal_setAllInputHandlers() {
+  initMidiInputs() {
     // get inputs iterator
     let inputs = this._midiAccess.inputs.values();
     // iterate over the inputs iterator, setting the onmidimessage handler for each input port.
     for (var input = inputs.next(); input && !input.done; input = inputs.next()) {
-      console.dir(`set ${input.value.name}`);
       input.value.onmidimessage = (e) => {
         this._onInputMessage(e);
-        this.echoMIDIMessage(e);
+        this._onOutputMessage(e);
       }
     }
   }
 
   /**
-   * @name internal_set_midiAccess_onstatechange - Internal method
+   * @name applyMidiAccess_onstatechange - Internal method
    * @private
    */
-  internal_set_midiAccess_onstatechange() {
+  applyMidiAccess_onstatechange() {
     if (this._midiAccess) {
       this._midiAccess.onstatechange = (e) => {
         // execute class's internal callback
-        this.internal_onHardwareChange(e);
-        // followed by user defined callback
+        this.initMidiInputs();
+        // followed by user defined callback,
+        // only if MidiAccess's outputs / inputs changed:
+        // console.log(e);
+        // console.warn(`${e.port.type} ${e.port.state} ${e.port.connection} - ${e.port.name} `);
+        // if (e.port == 'MIDIInput') {
+        //
+        // }
         this._onHardwareChange(e);
       }
     }
   };
 
-
-  /**
-   * @name internal_onHardwareChange - Internal method
-   * @param event
-   * @private
-   */
-  internal_onHardwareChange(e) {
-    // set onmidimessage for input ports here:
-    this.internal_setAllInputHandlers();
-    //console.log(e.port.manufacturer, e.port.name, e.port.type, e.port.state);
-  }
 
 
   /**
@@ -137,10 +132,15 @@ const ElectronMidi = class {
       fn(e);
     }
   }
+  set onOutputMessage(fn) {
+    this._onOutputMessage = (e) => {
+      this.echoMIDIMessage(e);
+      fn(e);
+    }
+  }
 
   set onHardwareChange(fn) {
     this._onHardwareChange = fn;
-    this.internal_set_midiAccess_onstatechange();
   }
 
   set onReady(fn) {
@@ -169,18 +169,23 @@ const ElectronMidi = class {
       }
     }
   }
-/**
-* @method init - Calls the Web MIDI API's `navigator.requestMIDIAccess()` method, and sets class instance with the returned `MidiAccess` property. It then sets event handlers accordingly.
-* @private
-*/
+  /**
+   * @method init - Calls the Web MIDI API's `navigator.requestMIDIAccess()` method, and sets class instance with the returned `MidiAccess` property. It then sets event handlers accordingly.
+   * @private
+   */
   init() {
+    // console.log('electron-midi: init(): this should appear ONCE');
     navigator.requestMIDIAccess()
       .then(midiAccess => {
+          // console.log('electron-midi: init(): requestMIDIAccess.success: this should appear ONCE');
           this._midiAccess = midiAccess;
-
           // set onmidimessage handler:
-          this.internal_set_midiAccess_onstatechange();
-          this.internal_setAllInputHandlers();
+          // console.warn('init() CALLING:');
+          // console.warn(' -  this.applyMidiAccess_onstatechange()');
+          this.applyMidiAccess_onstatechange();
+          // console.warn(' -  this.initMidiInputs()');
+          this.initMidiInputs();
+          // console.warn(' -  this._onReady()');
           this._onReady();
         },
         error => {
