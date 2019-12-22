@@ -169,23 +169,28 @@ const ElectronMidi = class {
       }
     }
   }
+
+  /**
+   * @method sendAll - sends each `MidiMessage` in an array to a `MidiOutputPort` with a specific `MidiOutputPortName`.
+   * @property {string} midiOutputPortName - Name of the MidiOutputPort to send this MidiMessage to.
+   * @property {array} arrData - 2d array, each nested array contains three ES2017 uint8Array values, making up a MidiMessage.
+   * @returns {undefined} - Returns `undefined` if specified `MidiOutputPort` is not found.
+   */
+  sendAll(midiOutputPortName, arrData) {
+    arrData.forEach(data => this.send(midiOutputPortName, data));
+  }
+
   /**
    * @method init - Calls the Web MIDI API's `navigator.requestMIDIAccess()` method, and sets class instance with the returned `MidiAccess` property. It then sets event handlers accordingly.
    * @private
    */
   init() {
-    // console.log('electron-midi: init(): this should appear ONCE');
     navigator.requestMIDIAccess()
       .then(midiAccess => {
-          // console.log('electron-midi: init(): requestMIDIAccess.success: this should appear ONCE');
           this._midiAccess = midiAccess;
           // set onmidimessage handler:
-          // console.warn('init() CALLING:');
-          // console.warn(' -  this.applyMidiAccess_onstatechange()');
           this.applyMidiAccess_onstatechange();
-          // console.warn(' -  this.initMidiInputs()');
           this.initMidiInputs();
-          // console.warn(' -  this._onReady()');
           this._onReady();
         },
         error => {
